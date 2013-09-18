@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    gosu (0.7.48)
+    tins (0.9.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  gosu
+  tins
