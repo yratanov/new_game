@@ -1,16 +1,11 @@
-class Wall
-  WALL_HEIGHT = 25.0
-  WALL_WIDTH = 25.0
+class Wall < LevelObject
+  attr_accessor :touched
 
-  def initialize(image_registry, x, y)
-    @image = image_registry.image('/media/images/wall.png')
-    @x = x
-    @y = y
+  def image_path
+    'wall.png'
   end
 
-  def draw
-    scale_x = WALL_WIDTH / @image.width
-    scale_y = WALL_HEIGHT / @image.height
-    @image.draw(@x, @y, 0, scale_x, scale_y)
+  def touched_path
+    'wall_touched.png'
   end
 end

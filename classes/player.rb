@@ -1,43 +1,55 @@
-class Player
-  attr_accessor :run_speed, :max_speed
+class Player < LevelObject
+  attr_accessor :run_speed, :max_speed, :jump_power, :vel_x, :vel_y, :rectangle
 
-  def initialize(window)
-    @window = window
-    @x = @y = @vel_x = @vel_y = 0.0
-    @score = 0
-    @animation = :stand
+  STATES = [:crouch, :stand, :run_right, :run_left, :jump, :jump_left, :jump_right]
+
+  def initialize(level, image_registry)
+    @level = level
+    @view = PlayerView.new(self, image_registry)
+    @vel_x = @vel_y = 0.0
+    @rectangle = Rectangle.new(0, 0, width, height)
+    stand!
     self.run_speed = 2
-    self.max_speed = 10
+    self.max_speed = 6
+    self.jump_power = 20
   end
 
-  def warp(x, y)
-    @x, @y = x, y
-  end
+  STATES.each do |state|
+    define_method "#{state}?" do
+      @state == state
+    end
 
-  def go_left
-    @animation = :stand
-    @vel_x -= run_speed unless wall_touched?(:left) or max_run_speed?
-  end
-
-  def go_right
-    @animation = :stand
-    @vel_x += run_speed unless wall_touched?(:right) or max_run_speed?
-  end
-
-  def crouch
-    @animation = :crouch
-  end
-
-  def wall_touched?(dir)
-    if dir == :right
-      @x >= Window::WIDTH - width
-    else
-      @x <= 10
+    define_method "#{state}!" do
+      @state = state
     end
   end
 
+  def warp(x, y)
+    rectangle.warp(x, y)
+  end
+
+  def go_left
+    @vel_x -= run_speed if @vel_x > 0 or not max_run_speed?
+  end
+
+  def go_right
+    @vel_x += run_speed if @vel_x < 0 or not max_run_speed?
+  end
+
+  def stand
+    @vel_x = 0
+  end
+
+  def crouch
+    crouch!
+  end
+
   def width
-    current_image.width + 10
+    @view.width
+  end
+
+  def height
+    @view.height
   end
 
   def max_run_speed?
@@ -45,45 +57,84 @@ class Player
   end
 
   def jump
-    @animation = :stand
-    @vel_y -= 20 if on_ground?
-    @jumping = true
+    @vel_y -= jump_power if on_ground?
   end
 
   def on_ground?
-    @y >= Window::HEIGHT - current_image.height
+    @on_ground
+  end
+
+  def no_velocity?
+    @vel_x == 0 and @vel_y == 0
   end
 
   def move
-    if on_ground?
-      @vel_y = 0 unless @jumping
-    else
-      @vel_y += @window.gravity
+    @vel_y += @level.gravity if not on_ground?
+    @on_ground = false
+
+    rectangle.move_y(@vel_y)
+    collide!(:y)
+    rectangle.move_x(@vel_x)
+    collide!(:x)
+    check_state!
+  end
+
+  def collide!(velocity)
+    @level.object_list.find_all {|o| collided?(o) }.each do |o|
+      if velocity == :x
+        collide_x(o)
+      else
+        collide_y(o)
+      end
     end
+  end
 
-    @y += @vel_y
-    @x += @vel_x
-
-    @vel_x -= 1 if @vel_x > 0
-    @vel_x += 1 if @vel_x < 0
-    @jumping = false
+  def check_state!
+    if no_velocity?
+      stand!
+    elsif @vel_y != 0 and not on_ground?
+      if @vel_x > 0
+        jump_right!
+      elsif @vel_x < 0
+        jump_left!
+      else
+        jump!
+      end
+    elsif @vel_y == 0
+      if @vel_x > 0
+        run_right!
+      elsif @vel_x < 0
+        run_left!
+      end
+    end
   end
 
   def draw
-    current_image.draw(@x, @y, 1, 1)
-    font = Gosu::Font.new(@window, 'Courier New', 20)
-    font.draw("#{@x} : #{@y}", 0, 0, 0)
-    font.draw("y: #{@vel_y} px/min, x: #{@vel_x} px/min", 0, 20, 0)
+    current_image.draw(rectangle.x, rectangle.y, 0)
   end
+
+  private
 
   def current_image
-    images[@animation]
+    @view.image(@state)
   end
 
-  def images
-    @images ||= {
-        stand: Gosu::Image.new(@window, @window.root_path + '/media/images/player/0.png', false),
-        crouch: Gosu::Image.new(@window, @window.root_path + '/media/images/player/d.png', false),
-    }
+  def collide_x(object)
+    if vel_x > 0
+      rectangle.right = object.rectangle.left
+    elsif vel_x < 0
+      rectangle.left = object.rectangle.right
+    end
+  end
+
+  def collide_y(object)
+    if vel_y > 0
+      rectangle.bottom = object.rectangle.top
+      @on_ground = true
+      @vel_y = 0
+    elsif vel_y < 0
+      rectangle.top = object.rectangle.bottom
+      @vel_y = 0
+    end
   end
 end

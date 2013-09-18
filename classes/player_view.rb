@@ -1,10 +1,22 @@
 class PlayerView
-  def initialize(player)
+  HEIGHT = 34
+  WIDTH = 25
+
+  def initialize(player, image_registry)
     @player = player
+    @image_registry = image_registry
   end
 
   def image(state)
     images[state]
+  end
+
+  def height
+    HEIGHT
+  end
+
+  def width
+    WIDTH
   end
 
   private
