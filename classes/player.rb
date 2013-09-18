@@ -90,7 +90,7 @@ class Player < LevelObject
   end
 
   def check_state!
-    if no_velocity?
+    if on_ground? and no_velocity?
       stand!
     elsif @vel_y != 0 and not on_ground?
       if @vel_x > 0

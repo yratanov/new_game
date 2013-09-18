@@ -12,14 +12,9 @@ describe Animation do
     images.first.should_receive(:draw).exactly(4).times
     images.last.should_receive(:draw).twice
 
-    subject.draw
-    subject.draw
-
-    subject.draw
-    subject.draw
-
-    subject.draw
-    subject.draw
+    6.times do # same like when frames changes
+      subject.draw
+    end
   end
 
   private

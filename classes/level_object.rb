@@ -22,6 +22,14 @@ class LevelObject
     end
   end
 
+  def x
+    rectangle.x
+  end
+
+  def y
+    rectangle.y
+  end
+
   def width
     WIDTH
   end

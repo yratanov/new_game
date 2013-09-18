@@ -8,7 +8,7 @@ ROOT_PATH = File.dirname(File.expand_path(__FILE__))
 class Window < Gosu::Window
 
   attr_reader :level
-  attr_accessor :debug
+  attr_accessor :debug, :camera
 
   def initialize(width, height)
     @width = width
@@ -16,6 +16,7 @@ class Window < Gosu::Window
     super(width, height, false)
     self.caption = 'Jump, jump!'
 
+    @camera = Camera.new(self)
     @font = Gosu::Font.new(self, 'Courier New', 18)
     @image_registry = ImageRegistry.new(self, '/media/images')
   end
@@ -36,6 +37,7 @@ class Window < Gosu::Window
       player.crouch
     end
     player.move
+    camera.target(player)
   end
 
   def right_pressed?
@@ -47,18 +49,23 @@ class Window < Gosu::Window
   end
 
   def draw
-    player.draw
-    object_list.draw
+    translate(-camera.x, -camera.y) do
+      player.draw
+      object_list.draw
+    end
     draw_debug! if @debug
   end
 
   def draw_debug!
     @font.draw("x:#{player.rectangle.x}, y:#{player.rectangle.y}", 50, 60, 0)
     @font.draw("vel_x:#{player.vel_x}, vel_y:#{player.vel_y}", 50, 80, 0)
+    @font.draw("camera x:#{camera.x}, y:#{camera.x}", 50, 100, 0)
+    @font.draw("level w:#{level.width}, h:#{level.height}", 50, 120, 0)
   end
 
   def load_level(lines)
     @level = Level.new(lines, @image_registry)
+    @camera.target(player)
   end
 
   def player
@@ -77,26 +84,34 @@ class Window < Gosu::Window
 end
 
 level = [
-    "-------------------------",
-    "-                       -",
-    "-                       -",
-    "-                       -",
-    "-            --         -",
-    "-                       -",
-    "--                      -",
-    "-                       -",
-    "-                       -",
-    "-                       -",
-    "-                       -",
-    "-      ---              -",
-    "-   x                   -",
-    "-   -----------         -",
-    "-                       -",
-    "-                -      -",
-    "-          -            -",
-    "-          -        -   -",
-    "-          -            -",
-    "-------------------------"]
+    "--------------------------------------------",
+    "-                                          -",
+    "-                                          -",
+    "-                                          -",
+    "-            --                            -",
+    "-                                          -",
+    "--             -                           -",
+    "-                -                         -",
+    "-                                          -",
+    "-                       -                  -",
+    "-                                          -",
+    "-      ---                                 -",
+    "-                            -             -",
+    "-   -----------                            -",
+    "-                       -                  -",
+    "-                       -                  -",
+    "-                       -                  -",
+    "-                  -    -                  -",
+    "-                       -                  -",
+    "-              -        -                  -",
+    "-                       -                  -",
+    "-                                          -",
+    "-                   -                      -",
+    "-          x     -                         -",
+    "-          -                               -",
+    "-          -        -                      -",
+    "-          -                               -",
+    "---------------------------     -----------"]
 
 window = Window.new(1024, 768)
 window.load_level(level)
