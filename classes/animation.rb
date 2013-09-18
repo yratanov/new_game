@@ -4,8 +4,8 @@ class Animation
   def initialize(images, wait_time = 5)
     @images = images
     @wait_time = wait_time
-    @wait_counter = 0
-    @counter = 0
+    reset_wait
+    reset_counter
   end
 
   def draw(*args)
@@ -28,12 +28,10 @@ class Animation
   private
 
   def tick
-    if @counter == images.size - 1
-      @counter = 0
-      @wait_counter += 1
-    elsif wait_exceed?
+    if wait_exceed?
       reset_wait
       @counter += 1
+      reset_counter if @counter == images.size
     else
       wait
     end
@@ -44,7 +42,11 @@ class Animation
   end
 
   def reset_wait
-    @wait_counter = 0
+    @wait_counter = 1
+  end
+
+  def reset_counter
+    @counter = 0
   end
 
   def wait_exceed?
