@@ -1,9 +1,14 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'gosu'
-require './classes/overloads'
 
 ROOT_PATH = File.dirname(File.expand_path(__FILE__))
+$LOAD_PATH.unshift( File.join( ROOT_PATH, 'lib' ))
+
+require 'camera'
+require 'level'
+require 'image_registry'
+
 
 class Window < Gosu::Window
 
@@ -40,6 +45,11 @@ class Window < Gosu::Window
     camera.target(player)
   end
 
+  def reload
+    @level.reload
+    @camera.target(player)
+  end
+
   def right_pressed?
     button_down? Gosu::KbRight or button_down? Gosu::GpRight
   end
@@ -54,13 +64,18 @@ class Window < Gosu::Window
       object_list.draw
     end
     draw_debug! if @debug
+    draw_info!
   end
 
   def draw_debug!
-    @font.draw("x:#{player.rectangle.x}, y:#{player.rectangle.y}", 50, 60, 0)
+    @font.draw("x:#{player.geometry.x}, y:#{player.geometry.y}", 50, 60, 0)
     @font.draw("vel_x:#{player.vel_x}, vel_y:#{player.vel_y}", 50, 80, 0)
     @font.draw("camera x:#{camera.x}, y:#{camera.x}", 50, 100, 0)
     @font.draw("level w:#{level.width}, h:#{level.height}", 50, 120, 0)
+  end
+
+  def draw_info!
+    @font.draw("Restart: press R", 800, 60, 0)
   end
 
   def load_level(lines)
@@ -79,39 +94,75 @@ class Window < Gosu::Window
   def button_down(id)
     if id == Gosu::KbEscape
       close
+    elsif id == Gosu::KbR
+      reload
     end
   end
 end
 
 level = [
-    "--------------------------------------------",
-    "-                                          -",
-    "-                                          -",
-    "-                                          -",
-    "-            --                            -",
-    "-                                          -",
-    "--             -                           -",
-    "-                -                         -",
-    "-                                          -",
-    "-                       -                  -",
-    "-                                          -",
-    "-      ---                                 -",
-    "-                            -             -",
-    "-   -----------                            -",
-    "-                       -                  -",
-    "-                       -                  -",
-    "-                       -                  -",
-    "-                  -    -                  -",
-    "-                       -                  -",
-    "-              -        -                  -",
-    "-                       -                  -",
-    "-                                          -",
-    "-                   -                      -",
-    "-          x     -                         -",
-    "-          -                               -",
-    "-          -        -                      -",
-    "-          -                               -",
-    "---------------------------     -----------"]
+    "-----------------------------------------------------------",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                      -   -               -  -  -  -  -  -",
+    "-                       ---                               -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                     {                    -  -  -  -  -  -",
+    "-            --       {                    -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |                      -  -  -  -  -  -",
+    "--             -    |   }                  -  -  -  -  -  -",
+    "-                -  |   }                  -  -  -  -  -  -",
+    "-                   |   }                  -  -  -  -  -  -",
+    "-                   }   }                  -  -  -  -  -  -",
+    "-                       }                  -  -  -  -  -  -",
+    "-      ---              }                  -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-   -----------                            -  -  -  -  -  -",
+    "-                      |                 /--/--/--/--/--/--",
+    "-                      |                /  -  -  -  -  -  -",
+    "-                      |               /   -  -  -  -  -  -",
+    "-                                          -  -  -  -  -  -",
+    "-                      }                   -  -  -  -  -  -",
+    "-              -       }                   -  -  -  -  -  -",
+    "-                      }                   -  -  -  -  -  -",
+    "-                      }          /-\\                     -",
+    "-                   |  }         /   \\                    -",
+    "-                   |  }        /--   \\                   -",
+    "-          -        |  }       /-  -   \\                  -",
+    "-          -        |  }      /--   -   \\                 -",
+    "-          -              x  /---        \\                -",
+    "-----------------------------------------------------------"]
 
 window = Window.new(1024, 768)
 window.load_level(level)

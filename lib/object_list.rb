@@ -19,8 +19,4 @@ class ObjectList
   def each(&block)
     objects.each(&block)
   end
-
-  def keep_if(param)
-    objects.reject
-  end
 end

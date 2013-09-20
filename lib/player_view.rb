@@ -1,3 +1,5 @@
+require 'animation'
+
 class PlayerView
   HEIGHT = 34
   WIDTH = 25

@@ -1,5 +1,8 @@
-class Player < LevelObject
-  attr_accessor :run_speed, :max_speed, :jump_power, :vel_x, :vel_y, :rectangle
+require 'player_view'
+require 'geometry_form/collision'
+
+class Player < LevelObject::Base
+  attr_accessor :run_speed, :max_speed, :jump_power, :vel_x, :vel_y, :geometry, :on_ground, :state
 
   STATES = [:crouch, :stand, :run_right, :run_left, :jump, :jump_left, :jump_right]
 
@@ -7,11 +10,11 @@ class Player < LevelObject
     @level = level
     @view = PlayerView.new(self, image_registry)
     @vel_x = @vel_y = 0.0
-    @rectangle = Rectangle.new(0, 0, width, height)
-    stand!
+    @geometry = GeometryForm::Rectangle.new(0, 0, width, height)
+    @collision = GeometryForm::Collision.new
     self.run_speed = 2
-    self.max_speed = 6
-    self.jump_power = 20
+    self.max_speed = 4
+    self.jump_power = 10
   end
 
   STATES.each do |state|
@@ -25,7 +28,7 @@ class Player < LevelObject
   end
 
   def warp(x, y)
-    rectangle.warp(x, y)
+    geometry.warp(x, y)
   end
 
   def go_left
@@ -69,18 +72,20 @@ class Player < LevelObject
   end
 
   def move
+    self.state = nil
     @vel_y += @level.gravity if not on_ground?
     @on_ground = false
 
-    rectangle.move_y(@vel_y)
+    geometry.move_y(@vel_y)
     collide!(:y)
-    rectangle.move_x(@vel_x)
+    geometry.move_x(@vel_x)
     collide!(:x)
+
     check_state!
   end
 
   def collide!(velocity)
-    @level.object_list.find_all {|o| collided?(o) }.each do |o|
+    @level.object_list.find_all {|o| @collision.collided?(self.geometry, o.geometry) }.each do |o|
       if velocity == :x
         collide_x(o)
       else
@@ -90,6 +95,7 @@ class Player < LevelObject
   end
 
   def check_state!
+    return if state != nil
     if on_ground? and no_velocity?
       stand!
     elsif @vel_y != 0 and not on_ground?
@@ -105,12 +111,14 @@ class Player < LevelObject
         run_right!
       elsif @vel_x < 0
         run_left!
+      else
+        stand!
       end
     end
   end
 
   def draw
-    current_image.draw(rectangle.x, rectangle.y, 0)
+    current_image.draw(geometry.x, geometry.y, 0)
   end
 
   private
@@ -121,20 +129,17 @@ class Player < LevelObject
 
   def collide_x(object)
     if vel_x > 0
-      rectangle.right = object.rectangle.left
+      object.touch_left(self)
     elsif vel_x < 0
-      rectangle.left = object.rectangle.right
+      object.touch_right(self)
     end
   end
 
   def collide_y(object)
     if vel_y > 0
-      rectangle.bottom = object.rectangle.top
-      @on_ground = true
-      @vel_y = 0
+      object.touch_top(self)
     elsif vel_y < 0
-      rectangle.top = object.rectangle.bottom
-      @vel_y = 0
+      object.touch_bottom(self)
     end
   end
 end
