@@ -13,8 +13,10 @@ class Level
 
   GRAVITY = 0.5
 
-  def initialize(lines, image_registry)
-    self.lines = lines
+  class NotFound < Exception; end
+
+  def initialize(filepath, image_registry)
+    load_lines_form_file(filepath)
     @image_registry = image_registry
     @object_list = ObjectList.new
     load_from_lines
@@ -27,6 +29,14 @@ class Level
 
   def gravity
     GRAVITY
+  end
+
+  def load_lines_form_file(filepath)
+    begin
+      self.lines = File.open(filepath) { |file| file.read}.split /\n/
+    rescue
+      raise NotFound.new("Invalid level file: #{filepath}")
+    end
   end
 
   private
