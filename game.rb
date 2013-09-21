@@ -67,22 +67,22 @@ class Window < Gosu::Window
   end
 
   def draw
-    draw_info!
     if @error
       draw_error!
     else
-      translate(-camera.x, -camera.y) do
+      translate(-camera.rectangle.left, -camera.rectangle.top) do
         player.draw
-        object_list.draw
+        object_list.find_all {|o| camera.can_see?(o)}.each(&:draw)
       end
       draw_debug! if @debug
     end
+    draw_info!
   end
 
   def draw_debug!
     @font.draw("x:#{player.geometry.x}, y:#{player.geometry.y}", 50, 60, 0)
     @font.draw("vel_x:#{player.vel_x}, vel_y:#{player.vel_y}", 50, 80, 0)
-    @font.draw("camera x:#{camera.x}, y:#{camera.x}", 50, 100, 0)
+    @font.draw("camera x:#{camera.rectangle.left}, y:#{camera.rectangle.top}", 50, 100, 0)
     @font.draw("level w:#{level.width}, h:#{level.height}", 50, 120, 0)
   end
 
