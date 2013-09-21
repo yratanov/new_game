@@ -5,6 +5,14 @@ module LevelObject
 
       def initialize(wall)
         @wall = wall
+        after_init
+      end
+
+      def after_init
+      end
+
+      def changing_view?
+        false
       end
 
       def touch_right(object)

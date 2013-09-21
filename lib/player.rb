@@ -56,7 +56,7 @@ class Player < LevelObject::Base
   end
 
   def max_run_speed?
-    @vel_x.abs == max_speed
+    @vel_x.abs > max_speed
   end
 
   def jump
@@ -72,6 +72,7 @@ class Player < LevelObject::Base
   end
 
   def move
+    @previous_vel_y = @vel_y
     self.state = nil
     @vel_y += @level.gravity if not on_ground?
     @on_ground = false
@@ -96,9 +97,9 @@ class Player < LevelObject::Base
 
   def check_state!
     return if state != nil
-    if on_ground? and no_velocity?
+    if no_velocity? and not delta_vel_y < 0
       stand!
-    elsif @vel_y != 0 and not on_ground?
+    elsif (@vel_y != 0 and not on_ground?) or delta_vel_y < 0 # jumping, or in the highest point while jumping(vel_y = 0)
       if @vel_x > 0
         jump_right!
       elsif @vel_x < 0
@@ -106,15 +107,17 @@ class Player < LevelObject::Base
       else
         jump!
       end
-    elsif @vel_y == 0
+    elsif @vel_y == 0 and delta_vel_y >= 0
       if @vel_x > 0
         run_right!
       elsif @vel_x < 0
         run_left!
-      else
-        stand!
       end
     end
+  end
+
+  def delta_vel_y
+    @previous_vel_y - @vel_y
   end
 
   def draw

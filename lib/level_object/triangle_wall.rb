@@ -13,17 +13,29 @@ module LevelObject
     end
 
     def touch_strategy
-      return @touch_strategy if @touch_strategy
+      if @touch_strategy and @touch_strategy != triangle_touch_strategy
+        @touch_strategy.base_strategy = triangle_touch_strategy
+      else
+        @touch_strategy = triangle_touch_strategy
+      end
+      @touch_strategy
+    end
+
+    def triangle_touch_strategy
       case geometry.direction.to_s
       when 'left'
-        @touch_strategy = TouchLeft.new(self)
+        @triangle_touch_strategy ||= TouchLeft.new(self)
       when 'right'
-        @touch_strategy = TouchRight.new(self)
+        @triangle_touch_strategy ||= TouchRight.new(self)
       end
     end
 
     def image_path
-      "triangle_#{geometry.direction.to_s}_wall.png"
+      if touch_strategy.changing_view?
+        touch_strategy.image_path("triangle_#{geometry.direction.to_s}_wall.png")
+      else
+        "triangle_#{geometry.direction.to_s}_wall.png"
+      end
     end
 
     class TouchLeft < TouchStrategy::Base
@@ -31,17 +43,19 @@ module LevelObject
         object.geometry.bottom = wall.geometry.y_at(object.geometry.right)
         object.on_ground = true
         object.vel_y = 0
+        object.vel_x -= 1
         object.stand!
       end
 
       def touch_left(object)
-        object.vel_y = object.vel_x
+        object.geometry.right = wall.geometry.x_at(object.geometry.bottom)
+        object.vel_y = - object.vel_x
         object.run_right!
       end
 
       def touch_right(object)
-        object.vel_y = object.vel_x
-        object.vel_x = - object.vel_x * Math.sqrt(2)/2
+        object.geometry.right = wall.geometry.x_at(object.geometry.bottom)
+        object.vel_y = - object.vel_x
         object.run_left!
       end
     end

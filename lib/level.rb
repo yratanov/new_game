@@ -1,8 +1,9 @@
 require 'level_object/base'
 require 'level_object/wall'
-require 'level_object/mud_wall'
-require 'level_object/slick_wall'
 require 'level_object/triangle_wall'
+require 'level_object/touch_strategy/base'
+require 'level_object/touch_strategy/mud'
+require 'level_object/touch_strategy/slick'
 require 'player'
 require 'object_list'
 
@@ -38,24 +39,49 @@ class Level
       cells.each_with_index do |cell, cell_idx|
         case cell
         when '-'
-          @object_list << LevelObject::Wall.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          @object_list << wall_at(cell_idx, line_idx, LevelObject::Wall)
         when 'x'
           @player = Player.new(self, @image_registry)
           @player.warp(LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
         when '|'
-          @object_list << LevelObject::SlickWall.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          wall = wall_at(cell_idx, line_idx, LevelObject::Wall)
+          wall.touch_strategy = LevelObject::TouchStrategy::Slick.new(wall)
+          @object_list << wall
+        when '='
+          wall = wall_at(cell_idx, line_idx, LevelObject::Wall)
+          wall.touch_strategy = LevelObject::TouchStrategy::Slick.new(wall)
+          wall.touch_strategy.direction = :horizontal
+          @object_list << wall
         when '}'
-          @object_list << LevelObject::MudWall.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          wall = wall_at(cell_idx, line_idx, LevelObject::Wall)
+          wall.touch_strategy = LevelObject::TouchStrategy::Mud.new(wall)
+          @object_list << wall
+        when '.'
+          wall = wall_at(cell_idx, line_idx, LevelObject::Wall)
+          wall.touch_strategy = LevelObject::TouchStrategy::Mud.new(wall)
+          wall.touch_strategy.direction = :horizontal
+          @object_list << wall
+        when '('
+          triangle = wall_at(cell_idx, line_idx, LevelObject::TriangleWall)
+          triangle.touch_strategy = LevelObject::TouchStrategy::Slick.new(triangle)
+          triangle.touch_strategy.direction = :horizontal
+          triangle.direction = :left
+          @object_list << triangle
         when '/'
-          triangle = LevelObject::TriangleWall.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          triangle = wall_at(cell_idx, line_idx, LevelObject::TriangleWall)
           triangle.direction = :left
           @object_list << triangle
         when '\\'
-          triangle = LevelObject::TriangleWall.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          triangle = wall_at(cell_idx, line_idx, LevelObject::TriangleWall)
           triangle.direction = :right
           @object_list << triangle
         end
       end
     end
   end
+
+  def wall_at(cell_idx, line_idx, type)
+    type.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+  end
+
 end
