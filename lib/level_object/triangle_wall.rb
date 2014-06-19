@@ -32,7 +32,8 @@ module LevelObject
 
     def image_path
       if touch_strategy.changing_view?
-        touch_strategy.image_path("triangle_#{geometry.direction.to_s}_wall.png")
+        touch_strategy.
+          image_path("triangle_#{geometry.direction.to_s}_wall.png")
       else
         "triangle_#{geometry.direction.to_s}_wall.png"
       end

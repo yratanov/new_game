@@ -2,9 +2,11 @@ require 'player_view'
 require 'geometry_form/collision'
 
 class Player < LevelObject::Base
-  attr_accessor :run_speed, :max_speed, :jump_power, :vel_x, :vel_y, :geometry, :on_ground, :state
+  attr_accessor :run_speed, :max_speed, :jump_power, :vel_x,
+                :vel_y, :geometry, :on_ground, :state
 
-  STATES = [:crouch, :stand, :run_right, :run_left, :jump, :jump_left, :jump_right]
+  STATES = [:crouch, :stand, :run_right, :run_left, :jump,
+            :jump_left, :jump_right]
 
   def initialize(level, image_registry)
     @level = level
@@ -86,7 +88,7 @@ class Player < LevelObject::Base
   end
 
   def collide!(velocity)
-    @level.object_list.find_all {|o| @collision.collided?(self.geometry, o.geometry) }.each do |o|
+    @level.object_list.find_all { |o| @collision.collided?(self.geometry, o.geometry) }.each do |o|
       if velocity == :x
         collide_x(o)
       else

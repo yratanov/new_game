@@ -5,7 +5,8 @@ class Camera
 
   def initialize(window)
     @window = window
-    self.rectangle = GeometryForm::Rectangle.new(0, 0, @window.width, @window.height)
+    self.rectangle = GeometryForm::Rectangle.
+      new(0, 0, @window.width, @window.height)
   end
 
   def target(level_object)

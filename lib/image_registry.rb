@@ -11,7 +11,7 @@ class ImageRegistry
     if @images[path]
       @images[path]
     else
-      image_path =  File.join(ROOT_PATH, File.join(images_path, path))
+      image_path = File.join(ROOT_PATH, File.join(images_path, path))
       @images[path] = Gosu::Image::new(@window, image_path, false)
     end
   end
