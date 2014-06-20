@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
 gem 'gosu'
 gem 'tins'
+gem 'rake'
 gem 'rspec'
