@@ -42,7 +42,9 @@ class Level
   end
 
   def clear_destroyed
-    @object_list.objects.delete_if { |level_object| level_object.marked_to_destroy? }
+    @object_list.objects.delete_if do |level_object|
+      level_object.marked_to_destroy?
+    end
   end
 
   private
