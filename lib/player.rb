@@ -1,4 +1,5 @@
 require 'player_view'
+require 'level_object/base'
 require 'geometry_form/collision'
 
 class Player < LevelObject::Base

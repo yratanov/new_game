@@ -21,8 +21,8 @@ module LevelObject
 
     def draw
       return unless image
-      @scale_x ||= WIDTH / image.width
-      @scale_y ||= HEIGHT / image.height
+      @scale_x ||= width / image.width
+      @scale_y ||= height / image.height
       image.draw(geometry.x, geometry.y, 0, @scale_x, @scale_y)
     end
 
