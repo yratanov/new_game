@@ -1,7 +1,7 @@
 require 'level_object/touch_strategy/base'
+
 module LevelObject
   class Bomb < LevelObject::Base
-
     def image
       if exploded? and not animation.finished?
         @image = animation
@@ -19,19 +19,23 @@ module LevelObject
     end
 
     def touch_right(object)
-      @marked_to_destroy = true
+      touch
     end
 
     def touch_left(object)
-      touch_right(object)
+      touch
     end
 
     def touch_top(object)
-      touch_right(object)
+      touch
     end
 
     def touch_bottom(object)
-      touch_right(object)
+      touch
+    end
+
+    def touch
+      @marked_to_destroy = true
     end
 
     def explode(object)
