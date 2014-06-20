@@ -1,4 +1,5 @@
 require 'level_object/touch_strategy/base'
+require 'level_object/base'
 
 module LevelObject
   class Bomb < LevelObject::Base
