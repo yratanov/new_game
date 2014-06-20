@@ -1,5 +1,6 @@
 require 'level_object/base'
 require 'level_object/wall'
+require 'level_object/bomb'
 require 'level_object/triangle_wall'
 require 'level_object/touch_strategy/base'
 require 'level_object/touch_strategy/mud'
@@ -86,6 +87,8 @@ class Level
           triangle = wall_at(cell_idx, line_idx, LevelObject::TriangleWall)
           triangle.direction = :right
           @object_list << triangle
+        when '*'
+          @object_list << wall_at(cell_idx, line_idx, LevelObject::Bomb)
         end
       end
     end
