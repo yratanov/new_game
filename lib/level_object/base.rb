@@ -58,6 +58,10 @@ module LevelObject
     def touch_bottom(object)
     end
 
+    def mark_to_destroy
+      @marked_to_destroy = true
+    end
+
     def collided?(object)
       geometry.collided?(object.geometry)
     end

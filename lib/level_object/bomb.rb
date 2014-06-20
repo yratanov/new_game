@@ -35,7 +35,7 @@ module LevelObject
     end
 
     def touch
-      @marked_to_destroy = true
+      mark_to_destroy
     end
 
     def explode(object)
