@@ -22,15 +22,15 @@ module LevelObject
     end
 
     def touch_left(object)
-      self.touch_right(object)
+      touch_right(object)
     end
 
     def touch_top(object)
-      self.touch_right(object)
+      touch_right(object)
     end
 
     def touch_bottom(object)
-      self.touch_right(object)
+      touch_right(object)
     end
 
     def explode(object)
