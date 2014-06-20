@@ -4,7 +4,7 @@ module LevelObject
 
     def image
       if exploded?
-        @images = Animation.new(explode_images)
+        @images = animation
       else
         @image = @image_registry.image('bomb/bomb.png')
       end
@@ -46,6 +46,10 @@ module LevelObject
 
     def touch_strategy=(strategy)
       @touch_strategy = strategy
+    end
+
+    def animation
+      @animation ||= Animation.new(explode_images)
     end
   end
 end
