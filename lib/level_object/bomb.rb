@@ -34,9 +34,6 @@ module LevelObject
     end
 
     def explode(object)
-      if not exploded?
-        # object.damage(1)
-      end
       @exploded = true
     end
 
