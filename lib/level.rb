@@ -1,5 +1,6 @@
 require 'level_object/base'
 require 'level_object/wall'
+require 'level_object/bomb'
 require 'level_object/triangle_wall'
 require 'level_object/touch_strategy/base'
 require 'level_object/touch_strategy/mud'
@@ -37,6 +38,12 @@ class Level
       self.lines = File.open(filepath) { |file| file.read }.split /\n/
     rescue
       raise NotFound.new("Invalid level file: #{filepath}")
+    end
+  end
+
+  def clear_destroyed
+    @object_list.objects.delete_if do |level_object|
+      level_object.marked_to_destroy?
     end
   end
 
@@ -86,6 +93,8 @@ class Level
           triangle = wall_at(cell_idx, line_idx, LevelObject::TriangleWall)
           triangle.direction = :right
           @object_list << triangle
+        when '*'
+          @object_list << wall_at(cell_idx, line_idx, LevelObject::Bomb)
         end
       end
     end

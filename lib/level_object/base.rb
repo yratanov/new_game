@@ -20,6 +20,7 @@ module LevelObject
     end
 
     def draw
+      return unless image
       @scale_x ||= WIDTH / image.width
       @scale_y ||= HEIGHT / image.height
       image.draw(geometry.x, geometry.y, 0, @scale_x, @scale_y)
@@ -57,8 +58,16 @@ module LevelObject
     def touch_bottom(object)
     end
 
+    def mark_to_destroy
+      @marked_to_destroy = true
+    end
+
     def collided?(object)
       geometry.collided?(object.geometry)
+    end
+
+    def marked_to_destroy?
+      @marked_to_destroy
     end
   end
 end

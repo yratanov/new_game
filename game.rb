@@ -47,6 +47,7 @@ class Window < Gosu::Window
     end
     player.move
     camera.target(player)
+    level.clear_destroyed
   end
 
   def reload
