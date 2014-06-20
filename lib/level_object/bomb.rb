@@ -3,8 +3,10 @@ module LevelObject
   class Bomb < LevelObject::Base
 
     def image
-      if exploded?
-        @images = animation
+      if exploded? and not animation.finished?
+        @image = animation
+      elsif animation.finished?
+        nil
       else
         @image = @image_registry.image('bomb/bomb.png')
       end

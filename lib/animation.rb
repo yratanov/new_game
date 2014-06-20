@@ -8,6 +8,10 @@ class Animation
     reset_counter
   end
 
+  def finished?
+    @counter == images.size - 1
+  end
+
   def draw(*args)
     current_image.draw(*args)
     tick
