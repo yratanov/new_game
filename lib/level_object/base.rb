@@ -61,5 +61,9 @@ module LevelObject
     def collided?(object)
       geometry.collided?(object.geometry)
     end
+
+    def marked_to_destroy?
+      @marked_to_destroy
+    end
   end
 end

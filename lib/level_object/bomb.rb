@@ -19,7 +19,7 @@ module LevelObject
     end
 
     def touch_right(object)
-      explode(object)
+      @marked_to_destroy = true
     end
 
     def touch_left(object)

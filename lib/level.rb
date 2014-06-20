@@ -41,6 +41,10 @@ class Level
     end
   end
 
+  def clear_destroyed
+    @object_list.objects.delete_if { |level_object| level_object.marked_to_destroy? }
+  end
+
   private
 
   def load_from_lines
