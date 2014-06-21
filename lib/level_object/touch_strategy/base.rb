@@ -16,21 +16,23 @@ module LevelObject
       end
 
       def touch_right(object)
-        object.geometry.left = wall.geometry.right
+        object.left = wall.right
+        object.vel_x = 0
       end
 
       def touch_left(object)
-        object.geometry.right = wall.geometry.left
+        object.right = wall.left
+        object.vel_x = 0
       end
 
       def touch_top(object)
-        object.geometry.bottom = wall.geometry.top
+        object.bottom = wall.top
         object.on_ground = true
         object.vel_y = 0
       end
 
       def touch_bottom(object)
-        object.geometry.top = wall.geometry.bottom
+        object.top = wall.bottom
         object.vel_y = 0
       end
     end

@@ -85,6 +85,7 @@ class Player < LevelObject::Base
     geometry.move_x(@vel_x)
     collide!(:x)
 
+    p "y_vel: #{vel_y}"
     check_state!
   end
 

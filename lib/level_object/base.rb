@@ -2,9 +2,14 @@ require 'geometry_form/rectangle'
 
 module LevelObject
   class Base
+    extend Forwardable
+
     HEIGHT = 37.0
     WIDTH = 37.0
     attr_accessor :geometry
+
+    def_delegators :@geometry, :top, :bottom, :left, :right,
+                   :top=, :bottom=, :left=, :right=
 
     def initialize(image_registry, x, y)
       @image_registry = image_registry
