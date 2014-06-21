@@ -7,13 +7,15 @@ $LOAD_PATH.unshift(File.join(ROOT_PATH, 'lib'))
 
 require 'camera'
 require 'level'
+require 'config'
 require 'image_registry'
+require 'hud/debug'
+require 'hud/info'
 
 
 class Window < Gosu::Window
-
   attr_reader :level
-  attr_accessor :debug, :camera
+  attr_accessor :show_debug, :camera
 
   def initialize(width, height)
     @width = width
@@ -21,6 +23,8 @@ class Window < Gosu::Window
     super(width, height, false)
     self.caption = 'Jump, jump!'
 
+    configure_player
+    configure_debug
     @camera = Camera.new(self)
     @font = Gosu::Font.new(self, 'Courier New', 18)
     @image_registry = ImageRegistry.new(self, '/media/images')
@@ -75,16 +79,14 @@ class Window < Gosu::Window
         player.draw
         object_list.find_all {|o| camera.can_see?(o)}.each(&:draw)
       end
-      draw_debug! if @debug
+      draw_debug! if show_debug
     end
     draw_info!
   end
 
   def draw_debug!
-    @font.draw("x:#{player.geometry.x}, y:#{player.geometry.y}", 50, 60, 0)
-    @font.draw("vel_x:#{player.vel_x}, vel_y:#{player.vel_y}", 50, 80, 0)
-    @font.draw("camera x:#{camera.rectangle.left}, y:#{camera.rectangle.top}", 50, 100, 0)
-    @font.draw("level w:#{level.width}, h:#{level.height}", 50, 120, 0)
+    @debug ||= Hud::Debug.new(self, @font)
+    @debug.draw
   end
 
   def draw_error!
@@ -92,9 +94,8 @@ class Window < Gosu::Window
   end
 
   def draw_info!
-    @font.draw("Restart: press R", 800, 60, 0)
-    @font.draw("Next level: press N", 800, 80, 0)
-    @font.draw("Previous level: press P", 800, 100, 0)
+    @info ||= Hud::Info.new(self, @font)
+    @info.draw
   end
 
   def load_level(number)
@@ -136,10 +137,23 @@ class Window < Gosu::Window
   def next_level
     load_level(@current_level + 1)
   end
+
+  private
+
+  def configure_player
+    config = Game::Config.load(:player)
+    Player.run_speed = config['run_speed']
+    Player.max_speed = config['max_speed']
+    Player.jump_power = config['jump_power']
+  end
+
+  def configure_debug
+    config = Game::Config.load(:debug)
+    self.show_debug = config['show_all']
+  end
 end
 
 
 window = Window.new(1024, 768)
 window.load_level(1)
-window.debug = true
 window.show

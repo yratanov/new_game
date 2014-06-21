@@ -6,6 +6,10 @@ class Player < LevelObject::Base
   attr_accessor :run_speed, :max_speed, :jump_power, :vel_x,
                 :vel_y, :geometry, :on_ground, :state
 
+  class << self
+    attr_accessor :run_speed, :max_speed, :jump_power
+  end
+
   STATES = [:crouch, :stand, :run_right, :run_left, :jump,
             :jump_left, :jump_right]
 
@@ -15,9 +19,9 @@ class Player < LevelObject::Base
     @vel_x = @vel_y = 0.0
     @geometry = GeometryForm::Rectangle.new(0, 0, width, height)
     @collision = GeometryForm::Collision.new
-    self.run_speed = 2
-    self.max_speed = 4
-    self.jump_power = 10
+    self.run_speed = self.class.run_speed
+    self.max_speed = self.class.max_speed
+    self.jump_power = self.class.jump_power
   end
 
   STATES.each do |state|
@@ -85,7 +89,6 @@ class Player < LevelObject::Base
     geometry.move_x(@vel_x)
     collide!(:x)
 
-    p "y_vel: #{vel_y}"
     check_state!
   end
 
