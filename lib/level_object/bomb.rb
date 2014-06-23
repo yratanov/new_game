@@ -4,7 +4,7 @@ require 'level_object/base'
 module LevelObject
   class Bomb < LevelObject::Base
     def image
-        @image = @image_registry.image('bomb/bomb.png')
+      @image = @image_registry.image('bomb/bomb.png')
     end
 
     def explode_images
@@ -14,25 +14,30 @@ module LevelObject
     end
 
     def touch_right(object)
-      touch(object)
+      touch(object) if not touched?
     end
 
     def touch_left(object)
-      touch(object)
+      touch(object) if not touched?
     end
 
     def touch_top(object)
-      touch(object)
+      touch(object) if not touched?
     end
 
     def touch_bottom(object)
-      touch(object)
+      touch(object) if not touched?
     end
 
     def touch(object)
       config = Game::Config.load(:bomb)
       object.get_damage(config['damage'])
+      @touched = true
       mark_to_destroy
+    end
+
+    def touched?
+      @touched
     end
 
     def touch_strategy
