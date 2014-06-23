@@ -12,7 +12,7 @@ module Hud
     def draw
       width = window.width
       player.hp.times do |i|
-        images[:full].draw((width / 2) + i * 50, 100, 0)
+        images[:full].draw((width / 2.5) + i * 50, 100, 0)
       end
     end
   end

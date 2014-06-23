@@ -4,13 +4,7 @@ require 'level_object/base'
 module LevelObject
   class Bomb < LevelObject::Base
     def image
-      if exploded? and not animation.finished?
-        @image = animation
-      elsif animation.finished?
-        nil
-      else
         @image = @image_registry.image('bomb/bomb.png')
-      end
     end
 
     def explode_images
@@ -20,32 +14,25 @@ module LevelObject
     end
 
     def touch_right(object)
-      touch
+      touch(object)
     end
 
     def touch_left(object)
-      touch
+      touch(object)
     end
 
     def touch_top(object)
-      touch
+      touch(object)
     end
 
     def touch_bottom(object)
-      touch
+      touch(object)
     end
 
-    def touch
-      damage(1)
+    def touch(object)
+      config = Game::Config.load(:bomb)
+      object.get_damage(config['damage'])
       mark_to_destroy
-    end
-
-    def explode(object)
-      @exploded = true
-    end
-
-    def exploded?
-      @exploded
     end
 
     def touch_strategy

@@ -12,6 +12,7 @@ require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
 require 'hud/health'
+require 'hud/gameover'
 
 
 class Window < Gosu::Window
@@ -53,7 +54,6 @@ class Window < Gosu::Window
     player.move
     camera.target(player)
     level.clear_destroyed
-    level.deal_damage_to(player)
   end
 
   def reload
@@ -85,6 +85,7 @@ class Window < Gosu::Window
     end
     draw_info!
     draw_health!
+    draw_gameover! if player.dead?
   end
 
   def draw_debug!
@@ -104,6 +105,11 @@ class Window < Gosu::Window
   def draw_health!
     @health ||= Hud::Health.new(self, @image_registry)
     @health.draw
+  end
+
+  def draw_gameover!
+    @gameover_message ||= Hud::Gameover.new(self, @image_registry)
+    @gameover_message.draw
   end
 
   def load_level(number)

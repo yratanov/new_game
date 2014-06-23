@@ -133,8 +133,12 @@ class Player < LevelObject::Base
     current_image.draw(geometry.x, geometry.y, 0)
   end
 
-  def damage(points)
+  def get_damage(points)
     @hp -= points
+  end
+
+  def dead?
+    (@hp <= 0)
   end
 
   private

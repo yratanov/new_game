@@ -6,7 +6,7 @@ module LevelObject
 
     HEIGHT = 37.0
     WIDTH = 37.0
-    attr_accessor :geometry, :hurt
+    attr_accessor :geometry
 
     def_delegators :@geometry, :top, :bottom, :left, :right,
                    :top=, :bottom=, :left=, :right=
@@ -14,7 +14,6 @@ module LevelObject
     def initialize(image_registry, x, y)
       @image_registry = image_registry
       @geometry = geometry_form.new(x, y, width, height)
-      @hurt = 0
       setup
     end
 
@@ -68,28 +67,12 @@ module LevelObject
       @marked_to_destroy = true
     end
 
-    def hurt
-      @hurt
-    end
-
-    def damage(points)
-      @hurt += points
-    end
-
     def collided?(object)
       geometry.collided?(object.geometry)
     end
 
     def marked_to_destroy?
       @marked_to_destroy
-    end
-
-    def hurts?
-      (@hurt != 0)
-    end
-
-    def empty_hurt
-      @hurt = 0
     end
   end
 end

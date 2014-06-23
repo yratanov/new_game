@@ -47,17 +47,6 @@ class Level
     end
   end
 
-  def deal_damage_to(player)
-    damage_points = 0
-    @object_list.each do |object|
-      if object.hurts?
-        damage_points += object.hurt
-        object.empty_hurt
-        player.damage(damage_points)
-      end
-    end
-  end
-
   private
 
   def load_from_lines
