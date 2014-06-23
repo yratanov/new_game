@@ -11,6 +11,7 @@ require 'config'
 require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
+require 'hud/health'
 
 
 class Window < Gosu::Window
@@ -52,6 +53,7 @@ class Window < Gosu::Window
     player.move
     camera.target(player)
     level.clear_destroyed
+    level.deal_damage_to(player)
   end
 
   def reload
@@ -77,11 +79,12 @@ class Window < Gosu::Window
     else
       translate(-camera.rectangle.left, -camera.rectangle.top) do
         player.draw
-        object_list.find_all {|o| camera.can_see?(o)}.each(&:draw)
+        object_list.find_all { |o| camera.can_see?(o) }.each(&:draw)
       end
       draw_debug! if show_debug
     end
     draw_info!
+    draw_health!
   end
 
   def draw_debug!
@@ -96,6 +99,11 @@ class Window < Gosu::Window
   def draw_info!
     @info ||= Hud::Info.new(self, @font)
     @info.draw
+  end
+
+  def draw_health!
+    @health ||= Hud::Health.new(self, @image_registry)
+    @health.draw
   end
 
   def load_level(number)
@@ -144,6 +152,8 @@ class Window < Gosu::Window
     config = Game::Config.load(:player)
     Player.run_speed = config['run_speed']
     Player.max_speed = config['max_speed']
+    Player.hp = config['hp']
+    Player.max_hp = config['max_hp']
     Player.jump_power = config['jump_power']
   end
 

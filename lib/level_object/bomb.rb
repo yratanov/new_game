@@ -36,6 +36,7 @@ module LevelObject
     end
 
     def touch
+      damage(1)
       mark_to_destroy
     end
 

@@ -4,10 +4,10 @@ require 'geometry_form/collision'
 
 class Player < LevelObject::Base
   attr_accessor :run_speed, :max_speed, :jump_power, :vel_x,
-                :vel_y, :geometry, :on_ground, :state
+                :vel_y, :geometry, :on_ground, :state, :hp, :max_hp
 
   class << self
-    attr_accessor :run_speed, :max_speed, :jump_power
+    attr_accessor :run_speed, :max_speed, :jump_power, :hp, :max_hp
   end
 
   STATES = [:crouch, :stand, :run_right, :run_left, :jump,
@@ -22,6 +22,8 @@ class Player < LevelObject::Base
     self.run_speed = self.class.run_speed
     self.max_speed = self.class.max_speed
     self.jump_power = self.class.jump_power
+    self.hp = self.class.hp
+    self.max_hp = self.class.max_hp
   end
 
   STATES.each do |state|
@@ -129,6 +131,10 @@ class Player < LevelObject::Base
 
   def draw
     current_image.draw(geometry.x, geometry.y, 0)
+  end
+
+  def damage(points)
+    @hp -= points
   end
 
   private
