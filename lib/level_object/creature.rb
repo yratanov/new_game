@@ -9,7 +9,7 @@ module LevelObject
     include LevelObject::Mixin::View
 
     attr_accessor :run_speed, :max_speed, :state, :on_ground,
-                  :vel_x, :vel_y, :geometry
+                  :vel_x, :vel_y, :geometry, :collision
     class << self
       attr_accessor :run_speed, :max_speed, :jump_power
     end
@@ -57,16 +57,12 @@ module LevelObject
       @vel_x == 0 and @vel_y == 0
     end
 
-    def warp(x, y)
-      geometry.warp(x, y)
-    end
-
     def stand
       @vel_x = 0
     end
 
     def collide!(velocity)
-      @level.object_list.find_all { |o| @collision.collided?(self.geometry, o.geometry) }.each do |o|
+      @level.collide(self) do |o|
         if velocity == :x
           collide_x(o)
         else

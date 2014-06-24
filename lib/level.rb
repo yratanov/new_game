@@ -31,6 +31,14 @@ class Level
     load_from_lines
   end
 
+  def collide(creature)
+    object_list.each do |o|
+      if creature.collision.collided?(creature.geometry, o.geometry)
+        yield o
+      end
+    end
+  end
+
   def gravity
     GRAVITY
   end
