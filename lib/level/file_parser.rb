@@ -1,6 +1,7 @@
 require 'level_object/base'
 require 'level_object/wall'
 require 'level_object/bomb'
+require 'level_object/creature/zombie'
 require 'level_object/triangle_wall'
 require 'level_object/touch_strategy/base'
 require 'level_object/touch_strategy/mud'
@@ -15,6 +16,7 @@ module Level
     OBJECT_TYPES = {
       '-' => LevelObject::Wall,
       'x' => Player,
+      'Z' => LevelObject::Creature::Zombie,
       '|' => [
         LevelObject::Wall, strategy: LevelObject::TouchStrategy::Slick
       ],

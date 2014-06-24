@@ -1,10 +1,10 @@
 require 'player_view'
 require 'level_object/base'
-require 'level_object/creature'
+require 'level_object/creature/base'
 require 'level_object/mixin/jumper'
 require 'geometry_form/collision'
 
-class Player < LevelObject::Creature
+class Player < LevelObject::Creature::Base
   include LevelObject::Mixin::Jumper
 
   states :stand, :run_right, :run_left, :jump, :jump_left, :jump_right
