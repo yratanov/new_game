@@ -46,10 +46,8 @@ class Window < Gosu::Window
       player.stand
     end
 
-    if button_down? Gosu::KbDown
-      player.crouch
-    end
     player.move
+    level.move_creatures
     camera.target(player)
     level.clear_destroyed
   end
@@ -78,6 +76,7 @@ class Window < Gosu::Window
       translate(-camera.rectangle.left, -camera.rectangle.top) do
         player.draw
         object_list.find_all {|o| camera.can_see?(o)}.each(&:draw)
+        creature_list.find_all {|o| camera.can_see?(o)}.each(&:draw)
       end
       draw_debug! if show_debug
     end
@@ -116,6 +115,11 @@ class Window < Gosu::Window
 
   def object_list
     level.object_list
+  end
+
+
+  def creature_list
+    level.creatures
   end
 
   def button_down(id)

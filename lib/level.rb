@@ -10,7 +10,7 @@ require 'object_list'
 
 class Level
   attr_accessor :object_list, :width, :height, :matrix
-  attr_accessor :player, :lines
+  attr_accessor :player, :lines, :creatures
 
   GRAVITY = 0.5
 
@@ -21,11 +21,13 @@ class Level
     load_lines_form_file(filepath)
     @image_registry = image_registry
     @object_list = ObjectList.new
+    @creatures = ObjectList.new
     load_from_lines
   end
 
   def reload
     @object_list = ObjectList.new
+    @creatures = ObjectList.new
     load_from_lines
   end
 
@@ -47,6 +49,10 @@ class Level
     end
   end
 
+  def move_creatures
+    creatures.map(&:move)
+  end
+
   private
 
   def load_from_lines
@@ -59,8 +65,7 @@ class Level
         when '-'
           @object_list << wall_at(cell_idx, line_idx, LevelObject::Wall)
         when 'x'
-          @player = Player.new(self, @image_registry)
-          @player.warp(LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+          @player = Player.new(@image_registry, self, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
         when '|'
           wall = wall_at(cell_idx, line_idx, LevelObject::Wall)
           wall.touch_strategy = LevelObject::TouchStrategy::Slick.new(wall)
@@ -102,6 +107,10 @@ class Level
 
   def wall_at(cell_idx, line_idx, type)
     type.new(@image_registry, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
+  end
+
+  def creature_at(cell_idx, line_idx, type)
+    type.new(@image_registry, self, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
   end
 
 end
