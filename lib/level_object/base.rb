@@ -11,7 +11,8 @@ module LevelObject
     def_delegators :@geometry, :top, :bottom, :left, :right,
                    :top=, :bottom=, :left=, :right=
 
-    def initialize(image_registry, x, y)
+    def initialize(image_registry, level, x, y)
+      @level = level
       @image_registry = image_registry
       @geometry = geometry_form.new(x, y, width, height)
       setup
