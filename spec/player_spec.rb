@@ -2,8 +2,10 @@ require 'spec_helper'
 require 'player'
 
 describe Player do
-  subject { described_class.new(level, image_registry) }
+  subject { described_class.new(level, image_registry, x, y) }
   let(:level) { double }
+  let(:x) { 1 }
+  let(:y) { 2 }
   let(:image_registry) { double }
   let(:run_speed) { 2 }
 
