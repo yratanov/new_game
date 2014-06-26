@@ -9,7 +9,6 @@ describe LevelObject::Bomb do
   let(:y) { 20 }
 
   context '#touch' do
-    let(:player) { double }
     let(:bomb_config) { [damage: '1'] }
     let(:object) { double(get_damage: double) }
     let(:get_damage) { double }
