@@ -134,7 +134,15 @@ class Player < LevelObject::Base
   end
 
   def get_damage(points)
-    @hp -= points
+    if not points.nil? and self.hp > 0
+      @hp -= points
+    end
+  end
+
+  def get_heal(points)
+    if not points.nil? and ((self.hp + points.to_i) <= self.max_hp)
+      @hp += points
+    end
   end
 
   def dead?
