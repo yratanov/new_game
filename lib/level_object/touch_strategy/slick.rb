@@ -7,6 +7,7 @@ module LevelObject
       attr_accessor :base_strategy
 
       VELOCITY = 0.6
+      MAX_SPEED = 8
 
       def after_init
         self.direction = :vertical
@@ -60,8 +61,16 @@ module LevelObject
       end
 
       def speed_up_horizontal(player)
-        player.vel_x += VELOCITY if player.vel_x > 0
-        player.vel_x -= VELOCITY if player.vel_x < 0
+        if player.vel_x > 0 and not max_speed_reached?(player)
+          player.vel_x += VELOCITY
+        end
+        if player.vel_x < 0 and not max_speed_reached?(player)
+          player.vel_x -= VELOCITY
+        end
+      end
+
+      def max_speed_reached?(player)
+        player.vel_x.abs > MAX_SPEED
       end
     end
   end

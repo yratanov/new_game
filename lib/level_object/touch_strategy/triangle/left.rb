@@ -23,6 +23,7 @@ module LevelObject
             object.bottom = wall.geometry.y_at(object.left)
           else
             object.left = wall.right + 1
+            object.vel_x = 0
           end
           object.run_left!
         end

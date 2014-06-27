@@ -37,6 +37,11 @@ module Level
       end
     end
 
+    def move_all
+      player.move
+      creatures.map(&:move)
+    end
+
     def gravity
       GRAVITY
     end
@@ -46,6 +51,7 @@ module Level
       @matrix = parser.parse(filepath)
       self.width = parser.level_width
       self.player = parser.player
+      self.creatures = parser.creatures
       self.height = parser.level_height
     end
 

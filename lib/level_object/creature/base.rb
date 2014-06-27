@@ -38,6 +38,8 @@ module LevelObject
       end
 
       def move
+        before_move
+
         @previous_vel_y = @vel_y
         self.state = nil
         @vel_y += @level.gravity unless on_ground?
@@ -49,6 +51,9 @@ module LevelObject
         collide!(:x)
 
         check_state!
+      end
+
+      def before_move
       end
 
       def on_ground?

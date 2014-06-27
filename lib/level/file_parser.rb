@@ -11,12 +11,10 @@ require 'player'
 
 module Level
   class FileParser
-    attr_reader :level_height, :level_width, :player
+    attr_reader :level_height, :level_width, :player, :creatures
 
     OBJECT_TYPES = {
       '-' => LevelObject::Wall,
-      'x' => Player,
-      'Z' => LevelObject::Creature::Zombie,
       '|' => [
         LevelObject::Wall, strategy: LevelObject::TouchStrategy::Slick
       ],
@@ -53,18 +51,27 @@ module Level
       ]
     }
 
+    CREATURE_TYPES = {
+      'Z' => LevelObject::Creature::Zombie,
+    }
+
+    PLAYER = {
+      'x' => Player
+    }
+
     def initialize(image_registry, level)
       @image_registry = image_registry
       @level = level
+      @creatures = []
     end
 
     def parse(filepath)
-      begin
+      # begin
         lines = File.open(filepath) { |file| file.read }.split /\n/
         load_lines(lines)
-      rescue
-        raise NotFound.new("Invalid level file: #{filepath}")
-      end
+      # rescue
+      #   raise NotFound.new("Invalid level file: #{filepath}")
+      # end
     end
 
     def load_lines(lines)
@@ -75,25 +82,29 @@ module Level
         cells = line.split(//)
         @level_width ||= cells.size * LevelObject::Base::WIDTH
         cells.each_with_index do |cell, cell_idx|
-          next unless OBJECT_TYPES.key?(cell)
-          object_options = [*OBJECT_TYPES[cell]]
-          if object_options.last.kind_of? Hash
-            extra_options = object_options.pop
-          else
-            extra_options = {}
-          end
-          object_class = object_options.first
-          object = object_at(cell_idx, line_idx, object_class, extra_options)
-          matrix.add object, cell_idx, line_idx
-          if object.kind_of? Player
+          if OBJECT_TYPES.key?(cell)
+            object = object_from(OBJECT_TYPES, cell, cell_idx, line_idx)
+          elsif CREATURE_TYPES.key?(cell)
+            object = object_from(CREATURE_TYPES, cell, cell_idx, line_idx)
+            @creatures << object
+          elsif PLAYER.key?(cell)
+            object = object_from(PLAYER, cell, cell_idx, line_idx)
             @player = object
+          else
+            next
           end
+          matrix.add object, cell_idx, line_idx
         end
       end
 
       matrix
     end
 
+    def object_from(constant, cell, cell_idx, line_idx)
+      object_options = [*constant[cell]]
+      object_class, extra_options = check_options(object_options)
+      object_at(cell_idx, line_idx, object_class, extra_options)
+    end
 
     def object_at(cell_idx, line_idx, type, extra_options)
       object = type.new(@image_registry, @level, LevelObject::Base::WIDTH * cell_idx, LevelObject::Base::HEIGHT * line_idx)
@@ -107,6 +118,16 @@ module Level
         object.direction = extra_options[:wall_direction]
       end
       object
+    end
+
+    def check_options(options)
+      if options.last.kind_of? Hash
+        extra_options = options.pop
+      else
+        extra_options = {}
+      end
+      object_class = options.first
+      [object_class, extra_options]
     end
   end
 end
