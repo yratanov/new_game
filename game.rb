@@ -13,6 +13,8 @@ require 'hud/debug'
 require 'hud/info'
 require 'hud/health'
 require 'hud/gameover'
+require 'level_object/bomb'
+require 'level_object/health'
 
 
 class Window < Gosu::Window

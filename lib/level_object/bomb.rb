@@ -1,5 +1,4 @@
 require 'level_object/touch_strategy/base'
-require 'level_object/base'
 
 module LevelObject
   class Bomb < LevelObject::Base
@@ -9,7 +8,7 @@ module LevelObject
       attr_accessor :damage
     end
 
-    def initialize(image_registry, x, y)
+    def initialize(image_registry, level, x, y)
       self.damage = self.class.damage
       super
     end
@@ -41,7 +40,7 @@ module LevelObject
     end
 
     def touch(object)
-      object.get_damage(@damage)
+      object.damage(@damage)
       @touched = true
       mark_to_destroy
     end
