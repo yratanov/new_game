@@ -12,7 +12,7 @@ module LevelObject
       attr_accessor :run_speed, :max_speed, :state, :on_ground,
                     :vel_x, :vel_y, :geometry, :collision, :hp, :max_hp
       class << self
-        attr_accessor :run_speed, :max_speed, :jump_power, :hp, :max_hp
+        attr_accessor :run_speed, :max_speed, :jump_power, :default_hp, :max_hp
       end
 
       states :run_right, :run_left, :stand
@@ -26,7 +26,7 @@ module LevelObject
         @collision = GeometryForm::Collision.new
         self.run_speed = self.class.run_speed
         self.max_speed = self.class.max_speed
-        self.hp = self.class.hp
+        self.hp = self.class.default_hp
         self.max_hp = self.class.max_hp
         stand!
       end

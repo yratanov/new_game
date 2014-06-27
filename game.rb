@@ -161,7 +161,7 @@ class Window < Gosu::Window
     config = Game::Config.load(:player)
     Player.run_speed = config['run_speed']
     Player.max_speed = config['max_speed']
-    Player.hp = config['default_hp']
+    Player.default_hp = config['default_hp']
     Player.max_hp = config['max_hp']
     Player.jump_power = config['jump_power']
   end

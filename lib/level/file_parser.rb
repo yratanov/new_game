@@ -52,7 +52,7 @@ module Level
       '*' => [
         LevelObject::Bomb
       ],
-      'h' => [
+      '+' => [
         LevelObject::Health
       ]
     }

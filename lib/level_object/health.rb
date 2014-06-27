@@ -9,9 +9,8 @@ module LevelObject
       attr_accessor :health_points
     end
 
-    def initialize(image_registry, level, x, y)
-      self.health_points = self.class.health_points
-      super
+    def health_points
+      @health_points = self.class.health_points
     end
 
     def image
@@ -19,23 +18,24 @@ module LevelObject
     end
 
     def touch_right(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_left(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_top(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_bottom(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch(object)
-      object.heal(@health_points)
+      return if touched?
+      object.heal(health_points)
       @touched = true
       mark_to_destroy
     end
