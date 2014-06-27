@@ -11,6 +11,7 @@ require 'config'
 require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
+require 'level_object/bomb'
 require 'hud/health'
 require 'hud/gameover'
 
@@ -27,6 +28,8 @@ class Window < Gosu::Window
 
     configure_player
     configure_debug
+    configure_bombs
+    configure_healths
     @camera = Camera.new(self)
     @font = Gosu::Font.new(self, 'Courier New', 18)
     @image_registry = ImageRegistry.new(self, '/media/images')
@@ -158,7 +161,7 @@ class Window < Gosu::Window
     config = Game::Config.load(:player)
     Player.run_speed = config['run_speed']
     Player.max_speed = config['max_speed']
-    Player.hp = config['hp']
+    Player.hp = config['default_hp']
     Player.max_hp = config['max_hp']
     Player.jump_power = config['jump_power']
   end
@@ -166,6 +169,16 @@ class Window < Gosu::Window
   def configure_debug
     config = Game::Config.load(:debug)
     self.show_debug = config['show_all']
+  end
+
+  def configure_bombs
+    config = Game::Config.load(:bomb)
+    LevelObject::Bomb.damage = config['damage']
+  end
+
+  def configure_healths
+    config = Game::Config.load(:health)
+    LevelObject::Health.health_points = config['health_points']
   end
 end
 

@@ -3,6 +3,17 @@ require 'level_object/base'
 
 module LevelObject
   class Bomb < LevelObject::Base
+    attr_accessor :damage
+
+    class << self
+      attr_accessor :damage
+    end
+
+    def initialize(image_registry, x, y)
+      self.damage = self.class.damage
+      super
+    end
+
     def image
       @image = @image_registry.image('bomb/bomb.png')
     end
@@ -30,8 +41,7 @@ module LevelObject
     end
 
     def touch(object)
-      config = Game::Config.load(:bomb)
-      object.get_damage(config['damage'])
+      object.get_damage(@damage)
       @touched = true
       mark_to_destroy
     end

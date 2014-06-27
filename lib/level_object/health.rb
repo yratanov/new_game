@@ -3,6 +3,17 @@ require 'level_object/base'
 
 module LevelObject
   class Health < LevelObject::Base
+    attr_accessor :health_points
+
+    class << self
+      attr_accessor :health_points
+    end
+
+    def initialize(image_registry, x, y)
+      self.health_points = self.class.health_points
+      super
+    end
+
     def image
       @image = @image_registry.image('health.png')
     end
@@ -24,8 +35,7 @@ module LevelObject
     end
 
     def touch(object)
-      config = Game::Config.load(:health)
-      object.get_heal(config['health_points'])
+      object.get_heal(@health_points)
       @touched = true
       mark_to_destroy
     end

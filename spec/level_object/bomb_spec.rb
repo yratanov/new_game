@@ -9,12 +9,10 @@ describe LevelObject::Bomb do
   let(:y) { 20 }
 
   context '#touch' do
-    let(:bomb_config) { [damage: '1'] }
     let(:object) { double(get_damage: double) }
     let(:get_damage) { double }
 
     before do
-      Game::Config.stub(:load).and_return(bomb_config[0])
       subject.stub(:object).and_return(object)
     end
 
