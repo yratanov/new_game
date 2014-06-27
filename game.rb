@@ -12,6 +12,10 @@ require 'config'
 require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
+require 'hud/health'
+require 'hud/gameover'
+require 'level_object/bomb'
+require 'level_object/health'
 
 
 class Window < Gosu::Window
@@ -27,6 +31,8 @@ class Window < Gosu::Window
     configure_player
     configure_zombie
     configure_debug
+    configure_bombs
+    configure_healths
     @camera = Camera.new(self)
     @font = Gosu::Font.new(self, 'Courier New', 18)
     @image_registry = ImageRegistry.new(self, '/media/images')
@@ -83,6 +89,8 @@ class Window < Gosu::Window
       draw_debug! if show_debug
     end
     draw_info!
+    draw_health!
+    draw_gameover! if player.dead?
   end
 
   def draw_debug!
@@ -97,6 +105,16 @@ class Window < Gosu::Window
   def draw_info!
     @info ||= Hud::Info.new(self, @font)
     @info.draw
+  end
+
+  def draw_health!
+    @health ||= Hud::Health.new(self, @image_registry)
+    @health.draw
+  end
+
+  def draw_gameover!
+    @gameover_message ||= Hud::Gameover.new(self, @image_registry)
+    @gameover_message.draw
   end
 
   def load_level(number)
@@ -145,6 +163,8 @@ class Window < Gosu::Window
     config = Game::Config.load(:player)
     Player.run_speed = config['run_speed']
     Player.max_speed = config['max_speed']
+    Player.default_hp = config['default_hp']
+    Player.max_hp = config['max_hp']
     Player.jump_power = config['jump_power']
   end
 
@@ -152,11 +172,23 @@ class Window < Gosu::Window
     config = Game::Config.load(:zombie)
     LevelObject::Creature::Zombie.run_speed = config['run_speed']
     LevelObject::Creature::Zombie.max_speed = config['max_speed']
+    LevelObject::Creature::Zombie.default_hp = config['default_hp']
+    LevelObject::Creature::Zombie.max_hp = config['max_hp']
   end
 
   def configure_debug
     config = Game::Config.load(:debug)
     self.show_debug = config['show_all']
+  end
+
+  def configure_bombs
+    config = Game::Config.load(:bomb)
+    LevelObject::Bomb.damage = config['damage']
+  end
+
+  def configure_healths
+    config = Game::Config.load(:health)
+    LevelObject::Health.health_points = config['health_points']
   end
 end
 

@@ -10,9 +10,9 @@ module LevelObject
       include LevelObject::Mixin::View
 
       attr_accessor :run_speed, :max_speed, :state, :on_ground,
-                    :vel_x, :vel_y, :geometry, :collision
+                    :vel_x, :vel_y, :geometry, :collision, :hp, :max_hp
       class << self
-        attr_accessor :run_speed, :max_speed, :jump_power
+        attr_accessor :run_speed, :max_speed, :jump_power, :default_hp, :max_hp
       end
 
       states :run_right, :run_left, :stand
@@ -26,6 +26,8 @@ module LevelObject
         @collision = GeometryForm::Collision.new
         self.run_speed = self.class.run_speed
         self.max_speed = self.class.max_speed
+        self.hp = self.class.default_hp
+        self.max_hp = self.class.max_hp
         stand!
       end
 
@@ -125,6 +127,22 @@ module LevelObject
 
       def go_right
         @vel_x += run_speed if @vel_x < 0 or not max_run_speed?
+      end
+
+      def damage(points)
+        if points and @hp > 0
+          @hp -= points
+        end
+      end
+
+      def heal(points)
+        if points and ((@hp + points.to_i) <= @max_hp)
+          @hp += points
+        end
+      end
+
+      def dead?
+        (@hp <= 0)
       end
     end
   end
