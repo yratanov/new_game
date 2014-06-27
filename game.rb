@@ -7,20 +7,17 @@ $LOAD_PATH.unshift(File.join(ROOT_PATH, 'lib'))
 
 require 'camera'
 require 'level/base'
-require 'level_object/creature/zombie'
 require 'config'
 require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
 require 'hud/health'
 require 'hud/gameover'
-require 'level_object/bomb'
-require 'level_object/health'
 
 
 class Window < Gosu::Window
   attr_reader :level
-  attr_accessor :show_debug, :camera
+  attr_accessor :camera
 
   def initialize(width, height)
     @width = width
@@ -28,11 +25,7 @@ class Window < Gosu::Window
     super(width, height, false)
     self.caption = 'Jump, jump!'
 
-    configure_player
-    configure_zombie
-    configure_debug
-    configure_bombs
-    configure_healths
+    Game::Config.set_up
     @camera = Camera.new(self)
     @font = Gosu::Font.new(self, 'Courier New', 18)
     @image_registry = ImageRegistry.new(self, '/media/images')
@@ -86,7 +79,7 @@ class Window < Gosu::Window
           o.draw if camera.can_see?(o)
         end
       end
-      draw_debug! if show_debug
+      draw_debug!
     end
     draw_info!
     draw_health!
@@ -155,40 +148,6 @@ class Window < Gosu::Window
 
   def next_level
     load_level(@current_level + 1)
-  end
-
-  private
-
-  def configure_player
-    config = Game::Config.load(:player)
-    Player.run_speed = config['run_speed']
-    Player.max_speed = config['max_speed']
-    Player.default_hp = config['default_hp']
-    Player.max_hp = config['max_hp']
-    Player.jump_power = config['jump_power']
-  end
-
-  def configure_zombie
-    config = Game::Config.load(:zombie)
-    LevelObject::Creature::Zombie.run_speed = config['run_speed']
-    LevelObject::Creature::Zombie.max_speed = config['max_speed']
-    LevelObject::Creature::Zombie.default_hp = config['default_hp']
-    LevelObject::Creature::Zombie.max_hp = config['max_hp']
-  end
-
-  def configure_debug
-    config = Game::Config.load(:debug)
-    self.show_debug = config['show_all']
-  end
-
-  def configure_bombs
-    config = Game::Config.load(:bomb)
-    LevelObject::Bomb.damage = config['damage']
-  end
-
-  def configure_healths
-    config = Game::Config.load(:health)
-    LevelObject::Health.health_points = config['health_points']
   end
 end
 
