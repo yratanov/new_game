@@ -125,13 +125,13 @@ module LevelObject
       end
 
       def damage(points)
-        if not points.nil? and self.hp > 0
+        if points and @hp > 0
           @hp -= points
         end
       end
 
       def heal(points)
-        if not points.nil? and ((self.hp + points.to_i) <= self.max_hp)
+        if points and ((@hp + points.to_i) <= @max_hp)
           @hp += points
         end
       end

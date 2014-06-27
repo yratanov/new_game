@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'level_object/bomb'
-require 'config'
 
 describe LevelObject::Bomb do
   subject { described_class.new(image_registry, level, x, y) }

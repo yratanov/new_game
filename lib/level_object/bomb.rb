@@ -24,22 +24,23 @@ module LevelObject
     end
 
     def touch_right(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_left(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_top(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch_bottom(object)
-      touch(object) if not touched?
+      touch(object)
     end
 
     def touch(object)
+      return if touched?
       object.damage(@damage)
       @touched = true
       mark_to_destroy

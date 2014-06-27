@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'level_object/health'
-require 'config'
 
 describe LevelObject::Health do
   subject { described_class.new(image_registry, level, x, y) }
