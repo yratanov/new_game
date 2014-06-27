@@ -70,12 +70,12 @@ module Level
     end
 
     def parse(filepath)
-      # begin
+      begin
         lines = File.open(filepath) { |file| file.read }.split /\n/
         load_lines(lines)
-      # rescue
-      #   raise NotFound.new("Invalid level file: #{filepath}")
-      # end
+      rescue
+        raise NotFound.new("Invalid level file: #{filepath}")
+      end
     end
 
     def load_lines(lines)
