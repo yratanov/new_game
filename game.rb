@@ -7,6 +7,7 @@ $LOAD_PATH.unshift(File.join(ROOT_PATH, 'lib'))
 
 require 'camera'
 require 'level/base'
+require 'level_object/creature/zombie'
 require 'config'
 require 'image_registry'
 require 'hud/debug'
@@ -28,6 +29,7 @@ class Window < Gosu::Window
     self.caption = 'Jump, jump!'
 
     configure_player
+    configure_zombie
     configure_debug
     configure_bombs
     configure_healths
@@ -52,7 +54,7 @@ class Window < Gosu::Window
       player.stand
     end
 
-    player.move
+    level.move_all
     camera.target(player)
     level.clear_destroyed
   end
@@ -164,6 +166,12 @@ class Window < Gosu::Window
     Player.default_hp = config['default_hp']
     Player.max_hp = config['max_hp']
     Player.jump_power = config['jump_power']
+  end
+
+  def configure_zombie
+    config = Game::Config.load(:zombie)
+    LevelObject::Creature::Zombie.run_speed = config['run_speed']
+    LevelObject::Creature::Zombie.max_speed = config['max_speed']
   end
 
   def configure_debug

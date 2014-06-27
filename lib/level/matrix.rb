@@ -15,7 +15,7 @@ module Level
     end
 
     def each_object
-      @objects.each do |line|
+      @objects.compact.each do |line|
         line.compact.each do |object|
           next unless object
           yield object
@@ -29,13 +29,13 @@ module Level
 
       for y in (j-NEAR_OBJECT_RADIUS .. j+NEAR_OBJECT_RADIUS)
         for x in (i-NEAR_OBJECT_RADIUS .. i+NEAR_OBJECT_RADIUS)
-          yield @objects[x][y] if @objects[x][y]
+          yield @objects[x][y] if @objects[x] and @objects[x][y]
         end
       end
     end
 
     def delete_if(&block)
-      @objects.each do |line|
+      @objects.compact.each do |line|
         line.delete_if &block
       end
     end

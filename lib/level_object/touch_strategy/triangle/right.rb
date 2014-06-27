@@ -18,7 +18,7 @@ module LevelObject
         end
 
         def touch_right(object)
-          object.bottom = wall.geometry.y_at(object.geometry.left)
+          object.bottom = wall.geometry.y_at(object.geometry.left) - 2
           object.run_left!
         end
 
@@ -29,6 +29,7 @@ module LevelObject
             object.bottom = wall.geometry.y_at(object.left)
           else
             object.right = wall.left - 1
+            object.vel_x = 0
           end
           object.run_right!
         end
