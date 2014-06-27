@@ -172,6 +172,8 @@ class Window < Gosu::Window
     config = Game::Config.load(:zombie)
     LevelObject::Creature::Zombie.run_speed = config['run_speed']
     LevelObject::Creature::Zombie.max_speed = config['max_speed']
+    LevelObject::Creature::Zombie.default_hp = config['default_hp']
+    LevelObject::Creature::Zombie.max_hp = config['max_hp']
   end
 
   def configure_debug
