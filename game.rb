@@ -6,12 +6,11 @@ ROOT_PATH = File.dirname(File.expand_path(__FILE__))
 $LOAD_PATH.unshift(File.join(ROOT_PATH, 'lib'))
 
 require 'camera'
-require 'level'
+require 'level/base'
 require 'config'
 require 'image_registry'
 require 'hud/debug'
 require 'hud/info'
-require 'level_object/bomb'
 require 'hud/health'
 require 'hud/gameover'
 
@@ -51,9 +50,6 @@ class Window < Gosu::Window
       player.stand
     end
 
-    if button_down? Gosu::KbDown
-      player.crouch
-    end
     player.move
     camera.target(player)
     level.clear_destroyed
@@ -82,7 +78,9 @@ class Window < Gosu::Window
     else
       translate(-camera.rectangle.left, -camera.rectangle.top) do
         player.draw
-        object_list.find_all { |o| camera.can_see?(o) }.each(&:draw)
+        level.each_object do |o|
+          o.draw if camera.can_see?(o)
+        end
       end
       draw_debug! if show_debug
     end
@@ -120,7 +118,7 @@ class Window < Gosu::Window
     path = "levels/#{@current_level}"
     @error = nil
     begin
-      @level = Level.new(path, @image_registry)
+      @level = Level::Base.new(path, @image_registry)
       @camera.target(player)
     rescue Level::NotFound => e
       @error = e.message

@@ -2,8 +2,17 @@ require 'spec_helper'
 require 'player'
 
 describe Player do
-  subject { described_class.new(level, image_registry) }
+  subject { described_class.new(level, image_registry, x, y) }
+
+  it_behaves_like 'jumper'
+  it_behaves_like 'creature with view', PlayerView
+  it_behaves_like 'creature with states',
+                  :stand, :run_right, :run_left,
+                  :jump, :jump_left, :jump_right
+
   let(:level) { double }
+  let(:x) { 1 }
+  let(:y) { 2 }
   let(:image_registry) { double }
   let(:run_speed) { 2 }
 

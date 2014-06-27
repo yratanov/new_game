@@ -1,7 +1,6 @@
 require 'level_object/base'
 require 'level_object/wall'
 require 'level_object/bomb'
-require 'level_object/health'
 require 'level_object/triangle_wall'
 require 'level_object/touch_strategy/base'
 require 'level_object/touch_strategy/mud'
@@ -96,8 +95,6 @@ class Level
           @object_list << triangle
         when '*'
           @object_list << wall_at(cell_idx, line_idx, LevelObject::Bomb)
-        when 'h'
-          @object_list << wall_at(cell_idx, line_idx, LevelObject::Health)
         end
       end
     end
