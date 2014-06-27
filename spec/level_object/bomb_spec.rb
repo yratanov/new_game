@@ -2,8 +2,9 @@ require 'spec_helper'
 require 'level_object/bomb'
 
 describe LevelObject::Bomb do
-  subject { described_class.new(image_registry, x, y) }
+  subject { described_class.new(image_registry, level, x, y) }
   let(:image_registry) { double }
+  let(:level) { double }
   let(:x) { 10 }
   let(:y) { 20 }
 
