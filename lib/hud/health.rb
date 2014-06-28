@@ -4,8 +4,8 @@ module Hud
   class Health < Hud::Image
     def images
       @images ||= {
-        full: @image_registry.image('/player/health.png'),
-        empty: @image_registry.image('/player/health_empty.png')
+        full: @image_registry.image('/player/heart_full.png'),
+        empty: @image_registry.image('/player/heart_empty.png')
       }
     end
 
